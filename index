@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michele Sandhu - Technical Project Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Portfolio of Michele Sandhu, Technical Project Manager">
+</head>
+<body>
+    <header class="header">
+        <div class="top-bar">
+            <a href="index.html" class="site-logo">Michele Sandhu</a>
+            <nav>
+                <ul class="main-nav">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="explore.html">Blog</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <p class="hero-eyebrow">Hello, I'm</p>
+                <h1 class="hero-name">Michele Sandhu</h1>
+                <p class="hero-title">Technical Project Manager</p>
+                <p class="hero-bio">Dedicated to delivering impactful solutions and the seamless integration of cross-functional teams. I bridge the gap between technology and business objectives — driving projects from concept to completion with clarity, efficiency, and purpose.</p>
+                <div class="hero-cta">
+                    <a href="contact.html" class="btn btn-primary">Get in Touch</a>
+                    <a href="about.html" class="btn btn-secondary">About Me</a>
+                </div>
+            </div>
+        </section>
+        <section class="skills-section">
+            <h2>Skills &amp; Tools</h2>
+            <div class="skills-grid">
+                <span class="skill-badge">HTML / CSS</span>
+                <span class="skill-badge">Java</span>
+                <span class="skill-badge">Python</span>
+                <span class="skill-badge">Figma</span>
+                <span class="skill-badge">Jira</span>
+            </div>
+        </section>
+        <section class="projects-section">
+            <h2>Projects</h2>
+            <p class="section-note">Project details coming soon.</p>
+            <div class="projects-grid">
+                <div class="project-card placeholder">
+                    <div class="project-card-header"></div>
+                    <div class="project-card-body"><h3>Project Coming Soon</h3><p>Details will be shared shortly.</p></div>
+                </div>
+                <div class="project-card placeholder">
+                    <div class="project-card-header"></div>
+                    <div class="project-card-body"><h3>Project Coming Soon</h3><p>Details will be shared shortly.</p></div>
+                </div>
+                <div class="project-card placeholder">
+                    <div class="project-card-header"></div>
+                    <div class="project-card-body"><h3>Project Coming Soon</h3><p>Details will be shared shortly.</p></div>
+                </div>
+            </div>
+        </section>
+        <section class="blog-preview-section">
+            <h2>Latest Posts</h2>
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <h3>Blog Post Title</h3>
+                    <p>Coming soon — check back for thoughts on project management, tech, and cross-functional collaboration.</p>
+                    <a href="explore.html" class="read-more">Read More &rarr;</a>
+                </article>
+                <article class="blog-card">
+                    <h3>Blog Post Title</h3>
+                    <p>Coming soon — check back for thoughts on project management, tech, and cross-functional collaboration.</p>
+                    <a href="explore.html" class="read-more">Read More &rarr;</a>
+                </article>
+                <article class="blog-card">
+                    <h3>Blog Post Title</h3>
+                    <p>Coming soon — check back for thoughts on project management, tech, and cross-functional collaboration.</p>
+                    <a href="explore.html" class="read-more">Read More &rarr;</a>
+                </article>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="footer-inner">
+            <p class="footer-name">Michele Sandhu</p>
+            <ul class="footer-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="explore.html">Blog</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="footer-social">
+                <a href="mailto:michelesandhu92@gmail.com">Email</a>
+                <a href="https://www.linkedin.com/in/michele-s-801a42233" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://github.com/micheleksandhu/portfolio" target="_blank" rel="noopener">GitHub</a>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
