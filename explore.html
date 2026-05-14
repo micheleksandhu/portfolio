@@ -21,36 +21,19 @@
             </nav>
         </div>
     </header>
+
     <main>
         <div class="blog-section">
             <h1>Blog</h1>
-            <p class="section-note" style="text-align:left; margin-bottom: 2rem;">Thoughts on project management, technology, and cross-functional collaboration. More posts coming soon.</p>
-            <article class="blog-post-card">
-                <h2>Blog Post Title</h2>
-                <p>Coming soon &mdash; this space will feature writing on technical project management, agile practices, tool integrations, and lessons learned across cross-functional teams.</p>
-            </article>
-            <article class="blog-post-card">
-                <h2>Blog Post Title</h2>
-                <p>Coming soon &mdash; this space will feature writing on technical project management, agile practices, tool integrations, and lessons learned across cross-functional teams.</p>
-            </article>
-            <article class="blog-post-card">
-                <h2>Blog Post Title</h2>
-                <p>Coming soon &mdash; this space will feature writing on technical project management, agile practices, tool integrations, and lessons learned across cross-functional teams.</p>
-            </article>
-            <article class="blog-post-card">
-                <h2>Blog Post Title</h2>
-                <p>Coming soon &mdash; this space will feature writing on technical project management, agile practices, tool integrations, and lessons learned across cross-functional teams.</p>
-            </article>
-            <article class="blog-post-card">
-                <h2>Blog Post Title</h2>
-                <p>Coming soon &mdash; this space will feature writing on technical project management, agile practices, tool integrations, and lessons learned across cross-functional teams.</p>
-            </article>
-            <article class="blog-post-card">
-                <h2>Blog Post Title</h2>
-                <p>Coming soon &mdash; this space will feature writing on technical project management, agile practices, tool integrations, and lessons learned across cross-functional teams.</p>
-            </article>
+            <p class="section-note" style="text-align:left; margin-bottom: 2rem;">
+                Thoughts on project management, technology, and cross-functional collaboration.
+            </p>
+            <div id="posts-container">
+                <p style="color:#999; font-size:0.9rem;">Loading posts...</p>
+            </div>
         </div>
     </main>
+
     <footer class="footer">
         <div class="footer-inner">
             <p class="footer-name">Michele Sandhu</p>
@@ -67,6 +50,55 @@
             </div>
         </div>
     </footer>
+
+    <script>
+    async function loadPosts() {
+        const container = document.getElementById('posts-container');
+        try {
+            const res = await fetch('https://api.github.com/repos/micheleksandhu/portfolio/contents/_posts');
+            if (!res.ok) throw new Error('No posts yet');
+            const files = await res.json();
+
+            if (!files.length) {
+                container.innerHTML = '<p style="color:#999;">No posts yet — check back soon.</p>';
+                return;
+            }
+
+            const posts = await Promise.all(
+                files
+                    .filter(f => f.name.endsWith('.md'))
+                    .sort((a, b) => b.name.localeCompare(a.name))
+                    .map(async f => {
+                        const r = await fetch(f.download_url);
+                        return await r.text();
+                    })
+            );
+
+            container.innerHTML = posts.map(raw => {
+                const titleMatch = raw.match(/^title:\s*"?(.+?)"?\s*$/m);
+                const dateMatch  = raw.match(/^date:\s*(.+?)\s*$/m);
+                const body = raw.replace(/^---[\s\S]+?---/, '').trim();
+                const title = titleMatch ? titleMatch[1] : 'Untitled';
+                const date  = dateMatch  ? new Date(dateMatch[1]).toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'}) : '';
+                const preview = body.replace(/[#*`]/g, '').slice(0, 200) + '...';
+
+                return `
+                    <article class="blog-post-card">
+                        <p style="font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px; color:#e63946; margin-bottom:0.5rem;">${date}</p>
+                        <h2>${title}</h2>
+                        <p>${preview}</p>
+                    </article>`;
+            }).join('');
+
+        } catch (e) {
+            container.innerHTML = '<p style="color:#999;">No posts yet — check back soon.</p>';
+        }
+    }
+
+    loadPosts();
+    </script>
+
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
