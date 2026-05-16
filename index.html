@@ -64,22 +64,8 @@
         </section>
         <section class="blog-preview-section">
             <h2>Latest Posts</h2>
-            <div class="blog-grid">
-                <article class="blog-card">
-                    <h3>Blog Post Title</h3>
-                    <p>Coming soon — check back for thoughts on project management, tech, and cross-functional collaboration.</p>
-                    <a href="explore.html" class="read-more">Read More &rarr;</a>
-                </article>
-                <article class="blog-card">
-                    <h3>Blog Post Title</h3>
-                    <p>Coming soon — check back for thoughts on project management, tech, and cross-functional collaboration.</p>
-                    <a href="explore.html" class="read-more">Read More &rarr;</a>
-                </article>
-                <article class="blog-card">
-                    <h3>Blog Post Title</h3>
-                    <p>Coming soon — check back for thoughts on project management, tech, and cross-functional collaboration.</p>
-                    <a href="explore.html" class="read-more">Read More &rarr;</a>
-                </article>
+            <div class="blog-grid" id="home-posts">
+                <p style="color:#999; font-size:0.9rem;">Loading posts...</p>
             </div>
         </section>
     </main>
@@ -99,7 +85,41 @@
             </div>
         </div>
     </footer>
+    <script>
+    async function loadHomePosts() {
+        const container = document.getElementById('home-posts');
+        try {
+            const res = await fetch('https://api.github.com/repos/micheleksandhu/portfolio/contents/_posts');
+            if (!res.ok) throw new Error();
+            const files = await res.json();
+            const mdFiles = files.filter(f => f.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name)).slice(0,3);
+            if (!mdFiles.length) { container.innerHTML = '<p style="color:#999;">No posts yet.</p>'; return; }
+            const posts = await Promise.all(mdFiles.map(async f => {
+                const r = await fetch(f.download_url);
+                return { text: await r.text(), name: f.name };
+            }));
+            container.innerHTML = posts.map(({text, name}) => {
+                const titleMatch = text.match(/^title:\s*"?(.+?)"?\s*$/m);
+                const dateMatch  = text.match(/^date:\s*(.+?)\s*$/m);
+                const body = text.replace(/^---[\s\S]+?---/, '').trim();
+                const title   = titleMatch ? titleMatch[1] : 'Untitled';
+                const date    = dateMatch ? new Date(dateMatch[1]).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '';
+                const preview = body.replace(/[#*`]/g,'').slice(0,150) + '...';
+                const slug    = name.replace('.md','');
+                return `<article class="blog-card">
+                    <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:#e63946;margin-bottom:0.5rem;">${date}</p>
+                    <h3>${title}</h3>
+                    <p>${preview}</p>
+                    <a href="explore.html#${slug}" class="read-more">Read More &rarr;</a>
+                </article>`;
+            }).join('');
+        } catch(e) {
+            container.innerHTML = '<p style="color:#999;">No posts yet — check back soon.</p>';
+        }
+    }
+    loadHomePosts();
+    </script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
