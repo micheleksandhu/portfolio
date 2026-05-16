@@ -50,54 +50,69 @@
             </div>
         </div>
     </footer>
-
     <script>
     async function loadPosts() {
         const container = document.getElementById('posts-container');
+        const hash = window.location.hash.slice(1);
         try {
             const res = await fetch('https://api.github.com/repos/micheleksandhu/portfolio/contents/_posts');
-            if (!res.ok) throw new Error('No posts yet');
+            if (!res.ok) throw new Error();
             const files = await res.json();
+            const mdFiles = files.filter(f => f.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+            if (!mdFiles.length) { container.innerHTML = '<p style="color:#999;">No posts yet.</p>'; return; }
 
-            if (!files.length) {
-                container.innerHTML = '<p style="color:#999;">No posts yet — check back soon.</p>';
-                return;
-            }
+            const posts = await Promise.all(mdFiles.map(async f => {
+                const r = await fetch(f.download_url);
+                return { text: await r.text(), name: f.name };
+            }));
 
-            const posts = await Promise.all(
-                files
-                    .filter(f => f.name.endsWith('.md'))
-                    .sort((a, b) => b.name.localeCompare(a.name))
-                    .map(async f => {
-                        const r = await fetch(f.download_url);
-                        return await r.text();
-                    })
-            );
+            container.innerHTML = posts.map(({text, name}) => {
+                const titleMatch = text.match(/^title:\s*"?(.+?)"?\s*$/m);
+                const dateMatch  = text.match(/^date:\s*(.+?)\s*$/m);
+                const body    = text.replace(/^---[\s\S]+?---/, '').trim();
+                const title   = titleMatch ? titleMatch[1] : 'Untitled';
+                const date    = dateMatch ? new Date(dateMatch[1]).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '';
+                const preview = body.replace(/[#*`]/g,'').slice(0,200) + '...';
+                const slug    = name.replace('.md','');
+                const fullBody = body.replace(/\n/g,'<br>').replace(/#{1,6}\s(.+)/g,'<strong>$1</strong>');
+                const isOpen  = hash === slug;
 
-            container.innerHTML = posts.map(raw => {
-                const titleMatch = raw.match(/^title:\s*"?(.+?)"?\s*$/m);
-                const dateMatch  = raw.match(/^date:\s*(.+?)\s*$/m);
-                const body = raw.replace(/^---[\s\S]+?---/, '').trim();
-                const title = titleMatch ? titleMatch[1] : 'Untitled';
-                const date  = dateMatch  ? new Date(dateMatch[1]).toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'}) : '';
-                const preview = body.replace(/[#*`]/g, '').slice(0, 200) + '...';
-
-                return `
-                    <article class="blog-post-card">
-                        <p style="font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px; color:#e63946; margin-bottom:0.5rem;">${date}</p>
-                        <h2>${title}</h2>
-                        <p>${preview}</p>
-                    </article>`;
+                return `<article class="blog-post-card" id="${slug}">
+                    <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:#e63946;margin-bottom:0.5rem;">${date}</p>
+                    <h2 style="cursor:pointer;" onclick="togglePost('${slug}')">${title}</h2>
+                    <div id="preview-${slug}" style="display:${isOpen?'none':'block'}">
+                        <p style="margin-top:0.75rem;">${preview}</p>
+                        <button onclick="togglePost('${slug}')" style="margin-top:1rem;background:none;border:none;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;text-decoration:underline;color:#111;">Read More</button>
+                    </div>
+                    <div id="full-${slug}" style="display:${isOpen?'block':'none'};margin-top:1rem;line-height:1.9;font-size:0.95rem;color:#333;">
+                        ${fullBody}
+                        <button onclick="togglePost('${slug}')" style="margin-top:1.5rem;background:none;border:none;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;text-decoration:underline;color:#111;">Collapse</button>
+                    </div>
+                </article>`;
             }).join('');
 
-        } catch (e) {
+            if (hash) {
+                setTimeout(() => {
+                    const el = document.getElementById(hash);
+                    if (el) el.scrollIntoView({behavior:'smooth'});
+                }, 100);
+            }
+        } catch(e) {
             container.innerHTML = '<p style="color:#999;">No posts yet — check back soon.</p>';
         }
     }
 
+    function togglePost(slug) {
+        const preview = document.getElementById('preview-' + slug);
+        const full    = document.getElementById('full-' + slug);
+        const isOpen  = full.style.display === 'block';
+        preview.style.display = isOpen ? 'block' : 'none';
+        full.style.display    = isOpen ? 'none'  : 'block';
+        if (!isOpen) history.replaceState(null, '', '#' + slug);
+    }
+
     loadPosts();
     </script>
-
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="script.js"></script>
 </body>
