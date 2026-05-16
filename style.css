@@ -186,7 +186,14 @@ address { font-style: normal; }
 }
 
 .about-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; margin-top: 3rem; align-items: start; }
-.about-image img { width: 100%; border-radius: 0; box-shadow: none; border: 1px solid #eeeeee; }
+.about-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+  border: 1px solid #eeeeee;
+}
 
 .about-bio { margin-bottom: 2.5rem; }
 .about-bio h2 {
